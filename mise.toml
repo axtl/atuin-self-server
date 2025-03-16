@@ -1,0 +1,6 @@
+[env]
+ATUIN_DB_NAME="op://Personal/atuin/database"
+ATUIN_DB_USERNAME="op://Personal/atuin/username"
+# Choose your own secure password
+ATUIN_DB_PASSWORD="op://Personal/atuin/password"
+TS_AUTHKEY="op://Personal/atuin/tailscale oauth client secret"

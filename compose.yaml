@@ -1,0 +1,46 @@
+version: "3.7"
+services:
+  atuin:
+    image: ghcr.io/atuinsh/atuin:v18.4.0
+    depends_on:
+      - tailscale
+    restart: always
+    command: server start
+    volumes:
+      - "./config:/config"
+    ports:
+      - 8888:8888
+    environment:
+      ATUIN_HOST: "0.0.0.0"
+      ATUIN_PORT: 8888
+      ATUIN_OPEN_REGISTRATION: "false"
+      ATUIN_DB_URI: postgres://${ATUIN_DB_USERNAME}:${ATUIN_DB_PASSWORD}@db/${ATUIN_DB_NAME}
+      RUST_LOG: info,atuin_server=debug
+    network_mode: service:tailscale
+  db:
+    image: postgres:17
+    depends_on:
+      - tailscale
+    restart: unless-stopped
+    volumes:
+      # Don't remove permanent storage for index database files!
+      - "./database:/var/lib/postgresql/data/"
+    environment:
+      POSTGRES_USER: ${ATUIN_DB_USERNAME}
+      POSTGRES_PASSWORD: ${ATUIN_DB_PASSWORD}
+      POSTGRES_DB: ${ATUIN_DB_NAME}
+    # network_mode: service:tailscale
+  tailscale:
+    image: ghcr.io/tailscale/tailscale:latest
+    restart: always
+    environment:
+      TS_AUTHKEY: ${TS_AUTHKEY}
+      TS_HOSTNAME: atuin
+      TS_STATE_DIR: /var/lib/tailscale
+      TS_EXTRA_ARGS: --advertise-tags=tag:container
+    volumes:
+      - "./tailscale:/var/lib/tailscale/"
+    devices:
+      - /dev/net/tun:/dev/net/tun
+    cap_add:
+      - net_admin
