@@ -1,7 +1,7 @@
 version: "3.7"
 services:
   atuin:
-    image: ghcr.io/atuinsh/atuin:v18.4.0
+    image: ghcr.io/atuinsh/atuin:latest
     depends_on:
       - tailscale
     restart: always
@@ -25,6 +25,9 @@ services:
     volumes:
       # Don't remove permanent storage for index database files!
       - "./database:/var/lib/postgresql/data/"
+      # And if the WAL ever gets corrupt, attach and fix with:
+      # docker run -it -v ./database:/var/lib/postgresql/data/ postgres:17 /bin/bash
+      # su postgres && cd /var/lib/postgresql/data && pg_resetwal .
     environment:
       POSTGRES_USER: ${ATUIN_DB_USERNAME}
       POSTGRES_PASSWORD: ${ATUIN_DB_PASSWORD}
