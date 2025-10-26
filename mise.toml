@@ -1,3 +1,7 @@
+[tasks.run]
+description = "Bring containers up"
+run = "op run -- podman compose up -d"
+
 [env]
 ATUIN_DB_NAME = "op://Personal/atuin/database"
 ATUIN_DB_USERNAME = "op://Personal/atuin/username"
