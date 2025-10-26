@@ -3,7 +3,7 @@ description = "Bring containers up"
 run = "op run -- podman compose up -d"
 
 [env]
-ATUIN_DB_NAME = "op://Personal/atuin/database"
-ATUIN_DB_USERNAME = "op://Personal/atuin/username"
-ATUIN_DB_PASSWORD = "op://Personal/atuin/password"
-TS_AUTHKEY = "op://Personal/atuin/tailscale oauth client secret"
+ATUIN_DB_NAME = "op://k/atuin/database"
+ATUIN_DB_USERNAME = "op://k/atuin/username"
+ATUIN_DB_PASSWORD = "op://k/atuin/password"
+TS_AUTHKEY = "op://k/atuin/tailscale oauth client secret"
