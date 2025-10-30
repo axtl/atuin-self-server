@@ -1,5 +1,5 @@
-[tasks.run]
-description = "Bring containers up"
+[tasks.compose]
+description = "Run the server"
 run = "op run -- podman compose up -d"
 
 [env]
