@@ -2,6 +2,10 @@
 description = "Run the server"
 run = "op run -- podman compose up -d"
 
+[tasks.teardown]
+description = "Shutdown containers"
+run = "podman compose down"
+
 [env]
 ATUIN_DB_NAME = "op://k/atuin/database"
 ATUIN_DB_USERNAME = "op://k/atuin/username"
