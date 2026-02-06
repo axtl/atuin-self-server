@@ -3,3 +3,4 @@ tailscale/*
 .env
 *.bak
 *.swp
+backup-*.sql
