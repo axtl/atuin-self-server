@@ -28,7 +28,7 @@ services:
     volumes:
       # Don't remove permanent storage for index database files!
       - "./database:/var/lib/postgresql/data/"
-      # If the WAL ever gets corrupt, attach a cointainer and fix with:
+      # If the WAL ever gets corrupt, attach a container and fix with:
       # docker run -it -v ./database:/var/lib/postgresql/data/ postgres:17 /bin/bash
       # su postgres && cd /var/lib/postgresql/data && pg_resetwal .
     environment:

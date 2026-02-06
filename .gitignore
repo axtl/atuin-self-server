@@ -1,2 +1,5 @@
 database/*
 tailscale/*
+.env
+*.bak
+*.swp
