@@ -3,7 +3,10 @@ services:
   atuin:
     image: ghcr.io/atuinsh/atuin:latest
     depends_on:
-      - tailscale
+      tailscale:
+        condition: service_started
+      db:
+        condition: service_healthy
     restart: always
     command: server start
     volumes:
@@ -17,9 +20,12 @@ services:
     network_mode: service:tailscale
   db:
     image: postgres:17
-    depends_on:
-      - tailscale
     restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
     volumes:
       # Don't remove permanent storage for index database files!
       - "./database:/var/lib/postgresql/data/"
