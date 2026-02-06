@@ -1,4 +1,3 @@
-version: "3.7"
 services:
   atuin:
     image: ghcr.io/atuinsh/atuin:latest
