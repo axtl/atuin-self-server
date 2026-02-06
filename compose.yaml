@@ -8,8 +8,6 @@ services:
     command: server start
     volumes:
       - "./config:/config"
-    ports:
-      - 8888:8888
     environment:
       ATUIN_HOST: "0.0.0.0"
       ATUIN_PORT: 8888
@@ -40,6 +38,8 @@ services:
       TS_HOSTNAME: atuin
       TS_STATE_DIR: /var/lib/tailscale
       TS_EXTRA_ARGS: --advertise-tags=tag:container
+    ports:
+      - 8888:8888
     volumes:
       - "./tailscale:/var/lib/tailscale/"
     devices:
