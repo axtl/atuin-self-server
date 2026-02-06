@@ -1,10 +1,63 @@
+[tasks.pull-if-mature]
+description = "Pull compose images only if released >= 7 days ago"
+shell = "bash"
+run = """
+set -euo pipefail
+
+for cmd in skopeo jq; do
+  if ! command -v "$cmd" &>/dev/null; then
+    echo "ERROR: $cmd is required but not found" >&2
+    exit 1
+  fi
+done
+
+max_age_days=7
+arch=$(uname -m)
+case "$arch" in
+  x86_64|amd64) arch="amd64" ;;
+  aarch64|arm64) arch="arm64" ;;
+esac
+images=(
+  ghcr.io/tailscale/tailscale:latest
+  ghcr.io/atuinsh/atuin:latest
+  docker.io/library/postgres:17
+)
+now_epoch=$(date +%s)
+
+for image in "${images[@]}"; do
+  created=$(skopeo inspect --override-os linux --override-arch "$arch" "docker://$image" 2>/dev/null | jq -r '.Created')
+  if [ -z "$created" ] || [ "$created" = "null" ]; then
+    echo "WARN: could not inspect $image, skipping"
+    continue
+  fi
+  ts="${created%%.*}"
+  if date -jf "%Y-%m-%dT%H:%M:%S" "$ts" +%s &>/dev/null; then
+    created_epoch=$(date -jf "%Y-%m-%dT%H:%M:%S" "$ts" +%s)
+  else
+    created_epoch=$(date -d "$ts" +%s)
+  fi
+  age_days=$(( (now_epoch - created_epoch) / 86400 ))
+  if [ "$age_days" -ge "$max_age_days" ]; then
+    echo "$image is $age_days days old (>= $max_age_days), pulling"
+    podman pull "$image"
+  else
+    echo "$image is only $age_days days old (< $max_age_days), skipping"
+  fi
+done
+"""
+
 [tasks.compose]
 description = "Run the server"
 run = "op run -- podman compose up -d"
+depends = ["pull-if-mature"]
 
 [tasks.teardown]
 description = "Shutdown containers"
 run = "podman compose down"
+
+[tasks.backup]
+description = "Dump the atuin database to a timestamped SQL file"
+run = "op run -- podman compose exec db pg_dump -U $ATUIN_DB_USERNAME $ATUIN_DB_NAME > backup-$(date +%F).sql"
 
 [env]
 ATUIN_DB_NAME = "op://k/atuin/database"
