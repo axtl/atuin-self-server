@@ -1,7 +1,7 @@
 [tasks.pull-if-mature]
 description = "Pull compose images only if released >= 7 days ago"
-shell = "bash"
 run = """
+#!/usr/bin/env bash
 set -euo pipefail
 
 for cmd in skopeo jq; do

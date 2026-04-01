@@ -7,7 +7,7 @@ services:
       db:
         condition: service_healthy
     restart: always
-    command: server start
+    command: start
     volumes:
       - "./config:/config"
     environment:
